@@ -1,0 +1,15 @@
+ALTER TABLE food_listings ADD COLUMN updated_at TIMESTAMP;
+
+ALTER TABLE transactions ADD COLUMN notes VARCHAR(500);
+
+ALTER TABLE notifications ADD COLUMN sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE impact_metrics ADD COLUMN city VARCHAR(255);
+ALTER TABLE impact_metrics ADD COLUMN food_kg DECIMAL(8,2) NOT NULL DEFAULT 0.0;
+ALTER TABLE impact_metrics ADD COLUMN record_date DATE NOT NULL DEFAULT (CURRENT_DATE);
+
+ALTER TABLE volunteer_deliveries ADD COLUMN pickup_lat DECIMAL(10,8) NOT NULL DEFAULT 0;
+ALTER TABLE volunteer_deliveries ADD COLUMN pickup_lng DECIMAL(10,8) NOT NULL DEFAULT 0;
+ALTER TABLE volunteer_deliveries ADD COLUMN drop_lat DECIMAL(10,8) NOT NULL DEFAULT 0;
+ALTER TABLE volunteer_deliveries ADD COLUMN drop_lng DECIMAL(10,8) NOT NULL DEFAULT 0;
+ALTER TABLE volunteer_deliveries ADD COLUMN points_earned INT;

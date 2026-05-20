@@ -1,0 +1,5 @@
+package com.foodlink.model.enums;
+
+public enum NotificationType {
+    NEW_LISTING, CLAIM_CONFIRMED, VOLUNTEER_ASSIGNED, DELIVERY_COMPLETE, EXPIRY_WARNING, POINTS_EARNED, BADGE_UNLOCKED
+}
