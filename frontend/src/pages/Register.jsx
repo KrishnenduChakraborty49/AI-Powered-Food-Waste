@@ -32,6 +32,7 @@ const Register = () => {
       await register(formData);
       toast.success('Account created successfully!');
     } catch (err) {
+      console.error("Full Error Details:", err.response?.data || err.message);
       toast.error('Registration failed. Please try again.');
       setError('Registration failed. Please try again.');
       setIsLoading(false);
