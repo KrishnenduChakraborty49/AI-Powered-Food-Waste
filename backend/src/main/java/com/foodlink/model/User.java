@@ -62,7 +62,10 @@ public class User {
 
     @Builder.Default
     @Column(name = "is_verified")
-    private Boolean isVerified = true;
+    private boolean isVerified = false;
+
+    @Column(name = "ngo_capacity")
+    private Integer ngoCapacity = 50;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

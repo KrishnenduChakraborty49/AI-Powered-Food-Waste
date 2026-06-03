@@ -14,6 +14,8 @@ const DonorDashboard = () => {
   const [showForm, setShowForm] = useState(false);
   const [profile, setProfile] = useState(null);
   const [analytics, setAnalytics] = useState(null);
+  const [smartText, setSmartText] = useState('');
+  const [isParsing, setIsParsing] = useState(false);
   
   const [formData, setFormData] = useState({
     foodName: '',
@@ -71,6 +73,26 @@ const DonorDashboard = () => {
     }
   };
 
+  const handleSmartParse = async () => {
+    if (!smartText) return;
+    setIsParsing(true);
+    try {
+      const response = await api.post('/ai/parse-listing', { text: smartText });
+      setFormData(prev => ({
+        ...prev,
+        ...response.data,
+        // Make sure date format matches datetime-local
+        expiryTime: response.data.expiryTime ? response.data.expiryTime.substring(0, 16) : prev.expiryTime
+      }));
+      toast.success('Form auto-filled by AI!');
+      setSmartText('');
+    } catch (error) {
+      toast.error('Failed to parse text. Please try manually.');
+    } finally {
+      setIsParsing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6 md:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -116,7 +138,27 @@ const DonorDashboard = () => {
           <div className="md:col-span-3">
             {showForm && (
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-4">Post Food Donation</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                  ✨ AI Smart Entry
+                </h2>
+                <div className="mb-6 flex gap-2">
+                  <input 
+                    type="text" 
+                    value={smartText} 
+                    onChange={e => setSmartText(e.target.value)} 
+                    placeholder="E.g. I have 20 portions of chicken biryani expiring tonight" 
+                    className="flex-1 px-4 py-2 border border-purple-200 rounded-lg focus:ring-purple-500 focus:border-purple-500"
+                  />
+                  <button 
+                    onClick={handleSmartParse}
+                    disabled={isParsing}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+                  >
+                    {isParsing ? 'Parsing...' : 'Auto-Fill'}
+                  </button>
+                </div>
+                
+                <h2 className="text-xl font-bold text-gray-800 mb-4">Manual Details</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>

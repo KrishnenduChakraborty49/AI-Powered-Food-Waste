@@ -10,6 +10,8 @@ const VolunteerDashboard = () => {
   const [deliveries, setDeliveries] = useState([]);
   const [otp, setOtp] = useState('');
   const [activeDeliveryId, setActiveDeliveryId] = useState(null);
+  const [optimizedRoute, setOptimizedRoute] = useState(null);
+  const [isOptimizing, setIsOptimizing] = useState(false);
 
   useEffect(() => {
     fetchAvailableDeliveries();
@@ -58,6 +60,25 @@ const VolunteerDashboard = () => {
     }
   };
 
+  const handleOptimizeRoute = async () => {
+    setIsOptimizing(true);
+    try {
+      // Mocking current location for the demo
+      const currentLat = 22.5726;
+      const currentLng = 88.3639;
+      const { email } = JSON.parse(localStorage.getItem('user'));
+      
+      const response = await api.get(`/ai/optimize-route?email=${email}&lat=${currentLat}&lng=${currentLng}`);
+      setOptimizedRoute(response.data);
+      toast.success('AI optimized route generated successfully!');
+    } catch (error) {
+      toast.error("Failed to optimize route");
+      console.error("Route optimization error", error);
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6 md:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
@@ -73,13 +94,41 @@ const VolunteerDashboard = () => {
         </header>
 
         {/* Mock Map View */}
-        <div className="bg-gray-200 h-64 rounded-2xl w-full flex items-center justify-center relative overflow-hidden shadow-sm">
+        <div className="bg-gray-200 h-auto min-h-64 rounded-2xl w-full flex flex-col md:flex-row items-center justify-center relative overflow-hidden shadow-sm p-6 gap-6">
           <div className="absolute inset-0 opacity-20 bg-[url('https://maps.googleapis.com/maps/api/staticmap?center=37.7749,-122.4194&zoom=13&size=800x400&sensor=false')] bg-cover bg-center"></div>
           <div className="bg-white/90 backdrop-blur px-6 py-4 rounded-xl shadow-lg z-10 flex flex-col items-center">
             <Navigation className="w-8 h-8 text-primary-500 mb-2" />
             <h3 className="font-bold text-gray-800">Live Tracking Mode</h3>
-            <p className="text-sm text-gray-500">Map view is simplified for this demo.</p>
+            <p className="text-sm text-gray-500 mb-4">Map view is simplified for this demo.</p>
+            <button 
+              onClick={handleOptimizeRoute}
+              disabled={isOptimizing}
+              className="w-full py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              ✨ {isOptimizing ? 'Optimizing...' : 'AI Optimize Route'}
+            </button>
           </div>
+          
+          {optimizedRoute && optimizedRoute.length > 0 && (
+            <div className="bg-white/95 backdrop-blur px-6 py-4 rounded-xl shadow-lg z-10 flex flex-col max-w-sm w-full">
+              <h3 className="font-bold text-gray-800 border-b pb-2 mb-3">AI Optimal Path</h3>
+              <ol className="space-y-3">
+                {optimizedRoute.map((step, index) => (
+                  <li key={index} className="flex items-start text-sm">
+                    <span className="flex items-center justify-center w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs mr-3 shrink-0">
+                      {step.stepOrder}
+                    </span>
+                    <div>
+                      <span className={`font-semibold ${step.action === 'PICKUP' ? 'text-amber-600' : 'text-green-600'}`}>
+                        {step.action}
+                      </span>
+                      <p className="text-gray-600 text-xs truncate max-w-[200px]">{step.locationName}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
         </div>
 
         <h2 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
