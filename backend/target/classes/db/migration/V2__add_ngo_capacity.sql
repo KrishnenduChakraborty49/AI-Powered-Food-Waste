@@ -1,0 +1,2 @@
+ALTER TABLE users
+ADD COLUMN ngo_capacity INT DEFAULT 50;

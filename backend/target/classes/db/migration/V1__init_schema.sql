@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS food_listings (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     donor_id BIGINT NOT NULL,
     food_name VARCHAR(255) NOT NULL,
     food_type VARCHAR(50),
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS food_listings (
 );
 
 CREATE TABLE IF NOT EXISTS transactions (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     listing_id BIGINT NOT NULL,
     ngo_id BIGINT NOT NULL,
     volunteer_id BIGINT,
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS transactions (
 );
 
 CREATE TABLE IF NOT EXISTS notifications (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
     listing_id BIGINT,
     transaction_id BIGINT,
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS notifications (
 );
 
 CREATE TABLE IF NOT EXISTS impact_metrics (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     transaction_id BIGINT NOT NULL,
     meals_count INT NOT NULL,
     co2_saved_kg DECIMAL(10,2),
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS impact_metrics (
 );
 
 CREATE TABLE IF NOT EXISTS volunteer_deliveries (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
     volunteer_id BIGINT NOT NULL,
     transaction_id BIGINT NOT NULL,
     accepted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
