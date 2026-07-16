@@ -78,15 +78,29 @@ const DonorDashboard = () => {
     setIsParsing(true);
     try {
       const response = await api.post('/ai/parse-listing', { text: smartText });
-      setFormData(prev => ({
-        ...prev,
-        ...response.data,
-        // Make sure date format matches datetime-local
-        expiryTime: response.data.expiryTime ? response.data.expiryTime.substring(0, 16) : prev.expiryTime
-      }));
+      
+      setFormData(prev => {
+        let newExpiry = prev.expiryTime;
+        if (response.data && response.data.expiryTime) {
+          if (typeof response.data.expiryTime === 'string') {
+            newExpiry = response.data.expiryTime.substring(0, 16);
+          } else if (Array.isArray(response.data.expiryTime)) {
+            const [y, m, d, h, min] = response.data.expiryTime;
+            newExpiry = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}T${String(h || 0).padStart(2, '0')}:${String(min || 0).padStart(2, '0')}`;
+          }
+        }
+        
+        return {
+          ...prev,
+          ...response.data,
+          expiryTime: newExpiry
+        };
+      });
+      
       toast.success('Form auto-filled by AI!');
       setSmartText('');
     } catch (error) {
+      console.error("AI Parse Error:", error);
       toast.error('Failed to parse text. Please try manually.');
     } finally {
       setIsParsing(false);
