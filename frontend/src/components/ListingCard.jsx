@@ -46,7 +46,16 @@ const ListingCard = ({ listing, onClaim }) => {
         </div>
         <div className="flex items-center">
           <MapPin className="w-4 h-4 mr-2 text-gray-400" />
-          <span><span className="text-blue-500 font-medium cursor-pointer hover:underline">View Location</span></span>
+          <span>
+            <a 
+              href={`https://www.google.com/maps/search/?api=1&query=${listing.lat},${listing.lng}`} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-blue-500 font-medium cursor-pointer hover:underline"
+            >
+              View Location
+            </a>
+          </span>
         </div>
       </div>
 
